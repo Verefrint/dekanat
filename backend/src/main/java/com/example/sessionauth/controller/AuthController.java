@@ -1,6 +1,8 @@
 package com.example.sessionauth.controller;
 
 import com.example.sessionauth.dto.AuthDTO;
+import com.example.sessionauth.dto.ChangeRoleDto;
+import com.example.sessionauth.dto.UserWithRolesDto;
 import com.example.sessionauth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -32,6 +36,12 @@ public class AuthController {
                 .body(this.authService.register(authDTO, request, response));
     }
 
+    @GetMapping("/users")
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    public List<UserWithRolesDto> getAllUsersWithRoles(Authentication authentication) {
+        return authService.getAllUsersWithRoles();
+    }
+
     @PostMapping(path = "/login")
     public ResponseEntity<?> loginUser(
             @Valid @RequestBody AuthDTO authDTO,
@@ -39,6 +49,26 @@ public class AuthController {
             HttpServletResponse response
     ) {
         return new ResponseEntity<>(authService.login(authDTO, request, response), OK);
+    }
+
+    @PostMapping(path = "/add_role")
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    public ResponseEntity<?> addRole(
+            @Valid @RequestBody ChangeRoleDto roleDto,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return new ResponseEntity<>(authService.changeRole(roleDto, request, response, true), OK);
+    }
+
+    @PostMapping(path = "/remove_role")
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    public ResponseEntity<?> removeRole(
+            @Valid @RequestBody ChangeRoleDto roleDto,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return new ResponseEntity<>(authService.changeRole(roleDto, request, response, false), OK);
     }
 
     @GetMapping(path = "/authenticated")

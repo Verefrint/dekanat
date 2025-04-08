@@ -1,9 +1,12 @@
 package com.example.sessionauth.service;
 
 import com.example.sessionauth.dto.AuthDTO;
+import com.example.sessionauth.dto.ChangeRoleDto;
+import com.example.sessionauth.dto.UserWithRolesDto;
 import com.example.sessionauth.entity.User;
 import com.example.sessionauth.entity.Role;
 import com.example.sessionauth.enumeration.RoleEnum;
+import com.example.sessionauth.repository.RoleRepo;
 import com.example.sessionauth.repository.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,12 +23,17 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service @Setter
 public class AuthService {
@@ -50,14 +58,16 @@ public class AuthService {
 
     private final SessionRegistry sessionRegistry;
 
+    private final RoleRepo roleRepo;
+
     public AuthService(
             UserRepo userRepo,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authManager,
             RedisIndexedSessionRepository redisIndexedSessionRepository,
             SessionRegistry sessionRegistry,
-            SecurityContextRepository securityContextRepository
-    ) {
+            SecurityContextRepository securityContextRepository,
+            RoleRepo roleRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
@@ -65,9 +75,10 @@ public class AuthService {
         this.sessionRegistry = sessionRegistry;
         this.securityContextRepository = securityContextRepository;
         this.securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+        this.roleRepo = roleRepo;
     }
 
-
+    @Transactional
     public String register(AuthDTO dto, HttpServletRequest request, HttpServletResponse response) {
         String email = dto.email().trim();
 
@@ -135,4 +146,48 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public String changeRole(ChangeRoleDto dto, HttpServletRequest request, HttpServletResponse response, boolean isAddRole) {
+
+        String email = dto.email().trim();
+
+        Optional<User> exists = userRepo.findByPrincipal(email);
+
+        if (exists.isEmpty()) {
+            throw new IllegalStateException(email + " not exists");
+        }
+
+        User user = exists.get();
+
+        if (isAddRole) {
+            Role role = new Role(RoleEnum.valueOf(dto.role()));
+            role.setUser(user);
+            roleRepo.saveAndFlush(role);
+        } else {
+            roleRepo.deleteByUserEmailAndRole(user.getEmail(), RoleEnum.valueOf(dto.role()));
+
+            // Clean session and expire sessions
+            Map<String, ? extends Session> userSessions = redisIndexedSessionRepository.findByIndexNameAndIndexValue(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, user.getEmail());
+
+            for (String sessionId : userSessions.keySet()) {
+                redisIndexedSessionRepository.deleteById(sessionId);
+            }
+        }
+
+        return "Success changed role from " + dto.email() + ", add or remove role: " + dto.role();
+    }
+
+
+    public List<UserWithRolesDto> getAllUsersWithRoles() {
+        List<User> users = userRepo.findAll();
+
+        return users.stream()
+                .map(user -> new UserWithRolesDto(
+                        user.getEmail(),
+                        user.getRoles().stream()
+                                .map(role -> role.getRoleEnum().name())
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+    }
 }
