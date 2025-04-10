@@ -20,6 +20,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
 @RequestMapping(path = "/api/v1/auth")
 public class AuthController {
 
