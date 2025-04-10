@@ -1,5 +1,6 @@
 package com.example.sessionauth.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED;
 
@@ -36,6 +38,10 @@ public class SecurityConfig {
     private int maxSession;
 
     private final RedisIndexedSessionRepository redisIndexedSessionRepository;
+
+    @Autowired
+    @Qualifier("realCorsConfig")
+    CorsConfigurationSource configurationSource;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -72,7 +78,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(configurationSource))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll();
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
