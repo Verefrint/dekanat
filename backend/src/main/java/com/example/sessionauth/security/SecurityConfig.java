@@ -95,19 +95,13 @@ public class SecurityConfig {
                 .build();
     }
 
-    /**
-     * Maintains a registry of Session information instances. For better understanding visit
-     * <a href="https://github.com/spring-projects/spring-session/blob/main/spring-session-docs/modules/ROOT/examples/java/docs/security/SecurityConfiguration.java">...</a>
-     * **/
     @Bean
     public SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry() {
         return new SpringSessionBackedSessionRegistry<>(this.redisIndexedSessionRepository);
     }
 
-    /** A SecurityContextRepository implementation which stores the security context in the HttpSession between requests. */
     @Bean
     public SecurityContextRepository securityContextRepository() {
       return new HttpSessionSecurityContextRepository();
     }
-
 }

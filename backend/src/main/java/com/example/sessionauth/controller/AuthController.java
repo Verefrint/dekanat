@@ -3,6 +3,7 @@ package com.example.sessionauth.controller;
 import com.example.sessionauth.dto.AuthDTO;
 import com.example.sessionauth.dto.ChangeRoleDto;
 import com.example.sessionauth.dto.UserWithRolesDto;
+import com.example.sessionauth.enumeration.RoleEnum;
 import com.example.sessionauth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -42,6 +44,13 @@ public class AuthController {
         return authService.getAllUsersWithRoles();
     }
 
+    //http://localhost:8080/api/v1/auth/login
+    /*
+    {
+        "email": "admin@admin.ru",
+        "password": "123"
+    }
+     */
     @PostMapping(path = "/login")
     public ResponseEntity<?> loginUser(
             @Valid @RequestBody AuthDTO authDTO,
@@ -71,10 +80,18 @@ public class AuthController {
         return new ResponseEntity<>(authService.changeRole(roleDto, request, response, false), OK);
     }
 
-    @GetMapping(path = "/authenticated")
+    @GetMapping("/me")
+    public Object currentUser(Authentication auth) {
+        return auth.getAuthorities();
+    }
+
+    @GetMapping("/roles")
     @PreAuthorize(value = "hasAuthority('ADMIN')")
-    public String getAuthenticated(Authentication authentication) {
-        return "Admin name is " + authentication.getName();
+    public ResponseEntity<String[]> getAllRoles() {
+        String[] roles = Arrays.stream(RoleEnum.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+        return ResponseEntity.ok(roles);
     }
 
     @GetMapping(path = "/anyuser")

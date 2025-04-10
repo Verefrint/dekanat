@@ -1,5 +1,5 @@
 package com.example.sessionauth.enumeration;
 
 public enum RoleEnum {
-    ADMIN, USER, EMPLOYEE
+    ADMIN, STUDENT, EMPLOYEE, TUTOR, REGISTERED
 }

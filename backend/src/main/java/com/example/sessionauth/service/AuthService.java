@@ -95,11 +95,12 @@ public class AuthService {
         user.setAccountNonExpired(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
-        user.addRole(new Role(RoleEnum.USER));
 
-        //if the user is ADMIN he can create a password when register for himself
+
         if (adminEmail.equals(email)) {
             user.addRole(new Role(RoleEnum.ADMIN));
+        } else {
+            user.addRole(new Role(RoleEnum.REGISTERED));
         }
 
         userRepo.save(user);
