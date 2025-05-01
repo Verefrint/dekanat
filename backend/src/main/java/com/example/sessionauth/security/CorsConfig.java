@@ -21,8 +21,7 @@ public class CorsConfig {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/v1/auth/**", configuration);
-        source.registerCorsConfiguration("/api/v1/user/**", configuration);//здесь можно множить эти строки до бесконечности
+        source.registerCorsConfiguration("/api/v1/**", configuration);
         return source;
     }
 

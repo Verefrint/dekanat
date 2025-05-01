@@ -52,6 +52,10 @@ public class User implements Serializable {
     @OneToMany(cascade = {PERSIST, MERGE, REMOVE}, fetch = EAGER, mappedBy = "user", orphanRemoval = true)
     private Set<Role> roles = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(cascade = {PERSIST, MERGE, REMOVE}, fetch = EAGER, mappedBy = "user", orphanRemoval = true)
+    private Set<Document> documents = new HashSet<>();
+
     public void addRole(Role role) {
         this.roles.add(role);
         role.setUser(this);
@@ -74,7 +78,6 @@ public class User implements Serializable {
                 && isAccountNonExpired() == user.isAccountNonExpired()
                 && isLocked() == user.isLocked()
                 && Objects.equals(getId(), user.getId())
-                && Objects.equals(getEmail(), user.getEmail())
                 && Objects.equals(getPassword(), user.getPassword())
                 && Objects.equals(getRoles(), user.getRoles());
     }
@@ -83,7 +86,6 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(
                 getId(),
-                getEmail(),
                 getPassword(),
                 isEnabled(),
                 isCredentialsNonExpired(),

@@ -6,8 +6,8 @@ import com.example.sessionauth.dto.UserWithRolesDto;
 import com.example.sessionauth.entity.User;
 import com.example.sessionauth.entity.Role;
 import com.example.sessionauth.enumeration.RoleEnum;
-import com.example.sessionauth.repository.RoleRepo;
-import com.example.sessionauth.repository.UserRepo;
+import com.example.sessionauth.repository.RoleRepository;
+import com.example.sessionauth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
@@ -44,7 +44,7 @@ public class AuthService {
     @Value(value = "${admin.email}")
     private String adminEmail;
 
-    private final UserRepo userRepo;
+    private final UserRepository userRepo;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -58,16 +58,16 @@ public class AuthService {
 
     private final SessionRegistry sessionRegistry;
 
-    private final RoleRepo roleRepo;
+    private final RoleRepository roleRepo;
 
     public AuthService(
-            UserRepo userRepo,
+            UserRepository userRepo,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authManager,
             RedisIndexedSessionRepository redisIndexedSessionRepository,
             SessionRegistry sessionRegistry,
             SecurityContextRepository securityContextRepository,
-            RoleRepo roleRepo) {
+            RoleRepository roleRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
@@ -148,7 +148,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String changeRole(ChangeRoleDto dto, HttpServletRequest request, HttpServletResponse response, boolean isAddRole) {
+    public String changeRole(ChangeRoleDto dto, boolean isAddRole) {
 
         String email = dto.email().trim();
 

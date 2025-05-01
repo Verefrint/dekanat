@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoleRepo extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("DELETE FROM Role r WHERE r.user.id IN (SELECT u.id FROM User u WHERE u.email = :email) AND r.roleEnum = :role")

@@ -67,7 +67,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return new ResponseEntity<>(authService.changeRole(roleDto, request, response, true), OK);
+        return new ResponseEntity<>(authService.changeRole(roleDto, true), OK);
     }
 
     @PostMapping(path = "/remove_role")
@@ -77,7 +77,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        return new ResponseEntity<>(authService.changeRole(roleDto, request, response, false), OK);
+        return new ResponseEntity<>(authService.changeRole(roleDto, false), OK);
     }
 
     @GetMapping("/me")

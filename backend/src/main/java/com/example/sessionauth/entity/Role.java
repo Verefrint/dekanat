@@ -36,5 +36,4 @@ public class Role implements Serializable {
     public Role(RoleEnum roleEnum) {
         this.roleEnum = roleEnum;
     }
-
 }
