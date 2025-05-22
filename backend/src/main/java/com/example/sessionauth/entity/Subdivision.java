@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 //Подразделение
-@Table(name = "job_title")
+@Table(name = "subdivision")
 @Entity
 @NoArgsConstructor
 @Getter
