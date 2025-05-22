@@ -21,7 +21,7 @@ public class Student {
     @Embedded
     Person person;
 
-    @Column(name = "year_started", nullable = false, unique = true)
+    @Column(name = "year_started", nullable = false)
     private long yearStarted;
 
     @Column(name = "financial_form")
