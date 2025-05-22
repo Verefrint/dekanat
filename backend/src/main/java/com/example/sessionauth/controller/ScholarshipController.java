@@ -19,28 +19,28 @@ public class ScholarshipController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<ScholarshipDTO> createScholarship(@RequestBody ScholarshipDTO scholarshipDTO) {
         ScholarshipDTO createdScholarship = scholarshipService.createScholarship(scholarshipDTO);
         return new ResponseEntity<>(createdScholarship, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<ScholarshipDTO> getScholarshipById(@PathVariable Long id) {
         ScholarshipDTO scholarshipDTO = scholarshipService.getScholarshipById(id);
         return ResponseEntity.ok(scholarshipDTO);
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<List<ScholarshipDTO>> getAllScholarships() {
         List<ScholarshipDTO> scholarships = scholarshipService.getAllScholarships();
         return ResponseEntity.ok(scholarships);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<ScholarshipDTO> updateScholarship(
             @PathVariable Long id,
             @RequestBody ScholarshipDTO scholarshipDTO) {
@@ -49,7 +49,7 @@ public class ScholarshipController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Void> deleteScholarship(@PathVariable Long id) {
         scholarshipService.deleteScholarship(id);
         return ResponseEntity.noContent().build();

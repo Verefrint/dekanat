@@ -19,28 +19,28 @@ public class KafedraController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<KafedraDTO> createKafedra(@RequestBody KafedraDTO kafedraDTO) {
         KafedraDTO createdKafedra = kafedraService.createKafedra(kafedraDTO);
         return new ResponseEntity<>(createdKafedra, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<KafedraDTO> getKafedraById(@PathVariable Long id) {
         KafedraDTO kafedraDTO = kafedraService.getKafedraById(id);
         return ResponseEntity.ok(kafedraDTO);
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<List<KafedraDTO>> getAllKafedras() {
         List<KafedraDTO> kafedras = kafedraService.getAllKafedras();
         return ResponseEntity.ok(kafedras);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<KafedraDTO> updateKafedra(
             @PathVariable Long id,
             @RequestBody KafedraDTO kafedraDTO) {
@@ -49,9 +49,10 @@ public class KafedraController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Void> deleteKafedra(@PathVariable Long id) {
         kafedraService.deleteKafedra(id);
         return ResponseEntity.noContent().build();
     }
 }
+

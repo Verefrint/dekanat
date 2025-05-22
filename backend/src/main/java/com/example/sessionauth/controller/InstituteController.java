@@ -19,28 +19,28 @@ public class InstituteController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<InstituteDTO> createInstitute(@RequestBody InstituteDTO instituteDTO) {
         InstituteDTO createdInstitute = instituteService.createInstitute(instituteDTO);
         return new ResponseEntity<>(createdInstitute, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<InstituteDTO> getInstituteById(@PathVariable Long id) {
         InstituteDTO instituteDTO = instituteService.getInstituteById(id);
         return ResponseEntity.ok(instituteDTO);
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<List<InstituteDTO>> getAllInstitutes() {
         List<InstituteDTO> institutes = instituteService.getAllInstitutes();
         return ResponseEntity.ok(institutes);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<InstituteDTO> updateInstitute(
             @PathVariable Long id,
             @RequestBody InstituteDTO instituteDTO) {
@@ -49,7 +49,7 @@ public class InstituteController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Void> deleteInstitute(@PathVariable Long id) {
         instituteService.deleteInstitute(id);
         return ResponseEntity.noContent().build();

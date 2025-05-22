@@ -18,29 +18,30 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
+
     @PostMapping("/create")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<DocumentDTO> createDocument(@RequestBody DocumentDTO documentDTO) {
         DocumentDTO createdDocument = documentService.createDocument(documentDTO);
         return new ResponseEntity<>(createdDocument, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<DocumentDTO> getDocumentById(@PathVariable Long id) {
         DocumentDTO documentDTO = documentService.getDocumentById(id);
         return ResponseEntity.ok(documentDTO);
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<List<DocumentDTO>> getAllDocuments() {
         List<DocumentDTO> documents = documentService.getAllDocuments();
         return ResponseEntity.ok(documents);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<DocumentDTO> updateDocument(
             @PathVariable Long id,
             @RequestBody DocumentDTO documentDTO) {
@@ -49,7 +50,7 @@ public class DocumentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
         documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
